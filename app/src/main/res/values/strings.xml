@@ -3,4 +3,7 @@
     <string name="text_button_auth">Войти через VK</string>
     <string name="text_auth_description">Для того, чтобы продолжить работу, необходимо авторизоваться в VK. \nЭто позволит Вам сохранять аудио в VK документы</string>
     <string name="hint_auth">Если у Вас установлено приложение ВКонтакте, то авторизация произойдет через него</string>
+    <string name="message_connection_error">Connection error</string>
+    <string name="message_unknown_error">Unknown error. Try again later.</string>
+    <string name="text_action_retry">Повторить</string>
 </resources>
