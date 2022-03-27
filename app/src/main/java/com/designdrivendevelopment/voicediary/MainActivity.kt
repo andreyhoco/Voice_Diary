@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onLoginFailed(exception: VKAuthException) {
-        if (!exception.isCanceled) {
+        if (!exception.isCanceled && exception.authError != ERROR_AUTH_CANCELED) {
             val descriptionResource =
                 if (exception.webViewError == WebViewClient.ERROR_HOST_LOOKUP) R.string.message_connection_error
                 else R.string.message_unknown_error
@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val ERROR_AUTH_CANCELED = "Authentication cancelled with activity code = 0"
+
         fun start(context: Context) {
             val intent = Intent(context, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
