@@ -2,6 +2,7 @@ package com.designdrivendevelopment.voicediary
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebViewClient
@@ -15,13 +16,15 @@ import com.vk.api.sdk.exceptions.VKAuthException
 
 class MainActivity : AppCompatActivity() {
     private var authLauncher: ActivityResultLauncher<Collection<VKScope>>? = null
+    private var isLaunchFromSettings = false
+    private var prefs: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val prefs = getSharedPreferences(SettingsFragment.SETTINGS_PREFS, MODE_PRIVATE)
-        val skipAuthScreen = prefs.getBoolean(SettingsFragment.SKIP_AUTH, false)
-        val isLaunchFromSettings = intent.getBooleanExtra(LAUNCH_FROM_SETTINGS, false)
+        prefs = getSharedPreferences(SettingsFragment.SETTINGS_PREFS, MODE_PRIVATE)
+        val skipAuthScreen = prefs?.getBoolean(SettingsFragment.SKIP_AUTH, false) ?: false
+        isLaunchFromSettings = intent.getBooleanExtra(LAUNCH_FROM_SETTINGS, false)
 
         if (VK.isLoggedIn() || (skipAuthScreen && !isLaunchFromSettings)) {
             HostActivity.start(this@MainActivity)
@@ -38,8 +41,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.elevation = 0f
         if (isLaunchFromSettings) {
             authLauncher?.launch(arrayListOf(VKScope.DOCS))
-            finish()
-            return
         }
 
         val authButton = findViewById<Button>(R.id.auth_button)
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onLogin() {
-        HostActivity.start(this@MainActivity)
+        if (!isLaunchFromSettings) HostActivity.start(this@MainActivity)
         finish()
     }
 
@@ -64,15 +65,27 @@ class MainActivity : AppCompatActivity() {
             val descriptionResource =
                 if (exception.webViewError == WebViewClient.ERROR_HOST_LOOKUP) R.string.message_connection_error
                 else R.string.message_unknown_error
-            Snackbar.make(findViewById(android.R.id.content), descriptionResource, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.text_action_retry)) {
-                    authLauncher?.launch(arrayListOf(VKScope.DOCS))
-                }.show()
+
+            if (isLaunchFromSettings) {
+                prefs?.edit()?.apply {
+                    putString(AUTH_ERROR_MSG, getString(descriptionResource))
+                    apply()
+                }
+                finish()
+            }
+            Snackbar.make(
+                findViewById(android.R.id.content),
+                descriptionResource,
+                Snackbar.LENGTH_LONG
+            ).setAction(getString(R.string.text_action_retry)) {
+                authLauncher?.launch(arrayListOf(VKScope.DOCS))
+            }.show()
         }
     }
 
     companion object {
         const val LAUNCH_FROM_SETTINGS = "launch_from_settings"
+        const val AUTH_ERROR_MSG = "auth_error_msg"
 
         fun start(context: Context) {
             val intent = Intent(context, MainActivity::class.java)

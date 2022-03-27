@@ -13,4 +13,6 @@
     <string name="text_skip_auth_checkbox">Пропускать экран авторизации</string>
     <string name="text_sync_button">Сохранить в VK Документы</string>
     <string name="title_settings_fragment">Настройки</string>
+    <string name="text_hint_auth">Вы уже авторизованы</string>
+    <string name="text_sign_out_button">Выйти из уч. записи</string>
 </resources>

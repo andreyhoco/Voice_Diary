@@ -9,12 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.TextView
+import androidx.core.view.isVisible
+import com.google.android.material.snackbar.Snackbar
 import com.vk.api.sdk.VK
 
 class SettingsFragment : Fragment() {
     private var skipAuthCheckBox: CheckBox? = null
     private var authButton: Button? = null
     private var syncButton: Button? = null
+    private var signOutButton: Button? = null
+    private var authHintText: TextView? = null
     private var prefs: SharedPreferences? = null
 
     override fun onCreateView(
@@ -37,6 +42,22 @@ class SettingsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         authButton?.isEnabled = !VK.isLoggedIn()
+        signOutButton?.isEnabled = VK.isLoggedIn()
+        authHintText?.isVisible = VK.isLoggedIn()
+
+        val authErrorMsg = prefs?.getString(MainActivity.AUTH_ERROR_MSG, "").orEmpty()
+        if (authErrorMsg.isNotEmpty()) {
+            Snackbar.make(
+                requireView(),
+                authErrorMsg,
+                Snackbar.LENGTH_LONG
+            ).show()
+
+            prefs?.edit()?.apply {
+                putString(MainActivity.AUTH_ERROR_MSG, "")
+                apply()
+            }
+        }
     }
 
     override fun onStop() {
@@ -63,18 +84,29 @@ class SettingsFragment : Fragment() {
             }
             context.startActivity(intent)
         }
+
+        signOutButton?.setOnClickListener {
+            VK.logout()
+            authButton?.isEnabled = true
+            signOutButton?.isEnabled = false
+            authHintText?.isVisible = false
+        }
     }
 
     private fun initViews(view: View) {
         skipAuthCheckBox = view.findViewById(R.id.skip_auth_checkbox)
         authButton = view.findViewById(R.id.auth_button)
         syncButton = view.findViewById(R.id.sync_button)
+        signOutButton = view.findViewById(R.id.sign_out_button)
+        authHintText = view.findViewById(R.id.text_hint_auth)
     }
 
     private fun clearViews() {
         skipAuthCheckBox = null
         authButton = null
         syncButton = null
+        signOutButton = null
+        authHintText = null
     }
 
     companion object {

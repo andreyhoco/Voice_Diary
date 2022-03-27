@@ -17,7 +17,8 @@
         android:layout_marginTop="24dp"
         android:checked="false"
         android:text="@string/text_skip_auth_checkbox"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        />
 
     <Button
         android:id="@+id/sync_button"
@@ -30,7 +31,8 @@
         android:textAllCaps="false"
         android:textSize="20sp"
         app:strokeColor="?attr/colorAccent"
-        style="?attr/materialButtonOutlinedStyle" />
+        style="?attr/materialButtonOutlinedStyle"
+        />
 
     <Button
         android:id="@+id/auth_button"
@@ -39,6 +41,28 @@
         android:layout_gravity="bottom"
         android:paddingVertical="8dp"
         android:text="@string/text_button_auth"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/text_hint_auth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/text_hint_auth"
+        android:textSize="16sp"
+        android:textColor="@color/gray"
+        />
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="24dp"
+        android:paddingVertical="8dp"
+        android:text="@string/text_sign_out_button"
         android:textAllCaps="false"
         android:textSize="20sp"
         />
