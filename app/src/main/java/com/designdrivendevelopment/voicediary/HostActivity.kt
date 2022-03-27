@@ -11,9 +11,23 @@ class HostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host)
 
+        setupFragmentListener()
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 replace(R.id.fragment_container, RecordsFragment.newInstance())
+            }
+        }
+    }
+
+    private fun setupFragmentListener() {
+        supportFragmentManager.apply {
+            setFragmentResultListener(
+                RecordsFragment.OPEN_SETTINGS_KEY, this@HostActivity
+            ) { _, _ ->
+                this.commit {
+                    replace(R.id.fragment_container, SettingsFragment.newInstance())
+                    addToBackStack(null)
+                }
             }
         }
     }
