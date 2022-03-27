@@ -1,5 +1,6 @@
 package com.designdrivendevelopment.voicediary
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import com.vk.api.sdk.VK
 
 class SettingsFragment : Fragment() {
     private var skipAuthCheckBox: CheckBox? = null
@@ -29,6 +31,12 @@ class SettingsFragment : Fragment() {
         prefs = requireContext().getSharedPreferences(SETTINGS_PREFS, 0)
         val skipAuth = prefs?.getBoolean(SKIP_AUTH, false) ?: false
         skipAuthCheckBox?.isChecked = skipAuth
+        setupListeners()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        authButton?.isEnabled = !VK.isLoggedIn()
     }
 
     override fun onStop() {
@@ -43,6 +51,18 @@ class SettingsFragment : Fragment() {
         super.onDestroyView()
         prefs = null
         clearViews()
+    }
+
+    private fun setupListeners() {
+        authButton?.setOnClickListener {
+            val context = context ?: return@setOnClickListener
+            val intent = Intent(context, MainActivity::class.java)
+            intent.apply {
+                putExtra(MainActivity.LAUNCH_FROM_SETTINGS, true)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
+        }
     }
 
     private fun initViews(view: View) {

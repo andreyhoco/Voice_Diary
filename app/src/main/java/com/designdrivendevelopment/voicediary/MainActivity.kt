@@ -21,20 +21,25 @@ class MainActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences(SettingsFragment.SETTINGS_PREFS, MODE_PRIVATE)
         val skipAuthScreen = prefs.getBoolean(SettingsFragment.SKIP_AUTH, false)
+        val isLaunchFromSettings = intent.getBooleanExtra(LAUNCH_FROM_SETTINGS, false)
 
-        if (VK.isLoggedIn() || skipAuthScreen) {
+        if (VK.isLoggedIn() || (skipAuthScreen && !isLaunchFromSettings)) {
             HostActivity.start(this@MainActivity)
             finish()
             return
         }
-        setContentView(R.layout.activity_main)
-        supportActionBar?.elevation = 0f
-
         authLauncher = VK.login(this) { result : VKAuthenticationResult ->
             when (result) {
                 is VKAuthenticationResult.Success -> onLogin()
                 is VKAuthenticationResult.Failed -> onLoginFailed(result.exception)
             }
+        }
+        setContentView(R.layout.activity_main)
+        supportActionBar?.elevation = 0f
+        if (isLaunchFromSettings) {
+            authLauncher?.launch(arrayListOf(VKScope.DOCS))
+            finish()
+            return
         }
 
         val authButton = findViewById<Button>(R.id.auth_button)
@@ -55,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onLoginFailed(exception: VKAuthException) {
-        if (!exception.isCanceled && exception.authError != ERROR_AUTH_CANCELED) {
+        if (!exception.isCanceled) {
             val descriptionResource =
                 if (exception.webViewError == WebViewClient.ERROR_HOST_LOOKUP) R.string.message_connection_error
                 else R.string.message_unknown_error
@@ -67,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val ERROR_AUTH_CANCELED = "Authentication cancelled with activity code = 0"
+        const val LAUNCH_FROM_SETTINGS = "launch_from_settings"
 
         fun start(context: Context) {
             val intent = Intent(context, MainActivity::class.java)
