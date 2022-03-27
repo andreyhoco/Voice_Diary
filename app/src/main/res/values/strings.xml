@@ -10,4 +10,7 @@
     <string name="description_settings_fab">Открыть экран настроек</string>
     <string name="description_stop_record_fab">Остановить запись голосового сообщения</string>
     <string name="text_without_auth_button">Без авторизации</string>
+    <string name="text_skip_auth_checkbox">Пропускать экран авторизации</string>
+    <string name="text_sync_button">Сохранить в VK Документы</string>
+    <string name="title_settings_fragment">Настройки</string>
 </resources>
