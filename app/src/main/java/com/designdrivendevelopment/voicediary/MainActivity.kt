@@ -19,7 +19,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (VK.isLoggedIn()) {
+        val prefs = getSharedPreferences("SETTINGS", MODE_PRIVATE)
+        val skipAuthScreen = prefs.getBoolean("skip_auth", false)
+
+        if (VK.isLoggedIn() || skipAuthScreen) {
             HostActivity.start(this@MainActivity)
             finish()
             return
@@ -37,6 +40,15 @@ class MainActivity : AppCompatActivity() {
         val authButton = findViewById<Button>(R.id.auth_button)
         authButton.setOnClickListener {
             authLauncher?.launch(arrayListOf(VKScope.DOCS))
+        }
+
+        val withoutAuthButton = findViewById<Button>(R.id.without_auth_button)
+        withoutAuthButton.setOnClickListener {
+            val prefsEditor = prefs.edit()
+            prefsEditor.putBoolean("skip_auth", true)
+            prefsEditor.apply()
+            HostActivity.start(this@MainActivity)
+            finish()
         }
     }
 

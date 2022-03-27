@@ -2,11 +2,12 @@
     <string name="app_name">Voice Diary</string>
     <string name="text_button_auth">Войти через VK</string>
     <string name="text_auth_description">Для того, чтобы продолжить работу, необходимо авторизоваться в VK. \nЭто позволит Вам сохранять аудио в VK документы</string>
-    <string name="hint_auth">Если у Вас установлено приложение ВКонтакте, то авторизация произойдет через него</string>
+    <string name="hint_auth">Если у Вас установлено приложение ВКонтакте, то авторизация произойдет через него\nВы можете авторизоваться позже на экране настроек</string>
     <string name="message_connection_error">Connection error</string>
     <string name="message_unknown_error">Unknown error. Try again later.</string>
     <string name="text_action_retry">Повторить</string>
     <string name="description_mic_fab">Начать запись голосового сообщения</string>
     <string name="description_settings_fab">Открыть экран настроек</string>
     <string name="description_stop_record_fab">Остановить запись голосового сообщения</string>
+    <string name="text_without_auth_button">Без авторизации</string>
 </resources>

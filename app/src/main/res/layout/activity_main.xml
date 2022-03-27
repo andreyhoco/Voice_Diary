@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,6 +28,19 @@
         android:text="@string/text_button_auth"
         android:textAllCaps="false"
         android:textSize="20sp"
+        />
+
+    <Button
+        android:id="@+id/without_auth_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:paddingVertical="8dp"
+        android:text="@string/text_without_auth_button"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        app:strokeColor="?attr/colorAccent"
+        style="?attr/materialButtonOutlinedStyle"
         />
 
     <TextView
