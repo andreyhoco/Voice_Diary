@@ -12,10 +12,12 @@ class RecordsAdapter(
     private val context: Context
 ) : ListAdapter<Record, RecordsAdapter.ViewHolder>(RecordsDiffUtil()) {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val recordName = view.findViewById<TextView>(R.id.record_name)
+        private val recordName = view.findViewById<TextView>(R.id.record_name)
+        private val recordDate = view.findViewById<TextView>(R.id.record_date)
 
         fun bind(record: Record) {
             recordName.text = record.name
+            recordDate.text = record.creationDate
         }
     }
 

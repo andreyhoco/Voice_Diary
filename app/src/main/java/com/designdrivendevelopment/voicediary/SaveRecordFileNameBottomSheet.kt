@@ -1,5 +1,6 @@
 package com.designdrivendevelopment.voicediary
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,11 @@ class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         clearViews()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        setFragmentResult(RESULT_ENTER_FILENAME_KEY, Bundle())
     }
 
     private fun setupListeners() {

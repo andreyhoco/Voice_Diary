@@ -93,7 +93,7 @@ class RecordsFragment : Fragment() {
         val marginItemDecoration = MarginItemDecoration(
             marginVertical = 10,
             marginHorizontal = 12,
-            marginBottom = getDisplayHeight(context) / DISPLAY_PARTS_NUMBER
+//            marginBottom = getDisplayHeight(context) / DISPLAY_PARTS_NUMBER
         )
         recordsList?.addItemDecoration(marginItemDecoration)
     }
@@ -168,7 +168,7 @@ class RecordsFragment : Fragment() {
             if (isRecording) recordService?.stopRecord()
             val recording = recordService?.isRecording ?: false
             viewModel.setRecordingStatus(recording)
-            viewModel.updateRecordsList()
+//            viewModel.updateRecordsList()
             showBottomSheet()
         }
 
@@ -207,7 +207,7 @@ class RecordsFragment : Fragment() {
             if (enteredName.isNotEmpty()) {
                 if (oldName.isNotEmpty()) viewModel.renameRecord(oldName, enteredName)
                 else viewModel.saveCurrRecordAs(enteredName)
-            }
+            } else viewModel.updateRecordsList()
         }
     }
 
