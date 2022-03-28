@@ -77,10 +77,12 @@ class RecordsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val context = requireContext()
         if (isRecordPermissionGranted) RecordService.start(context)
+        else viewModel.updateRecordsList()
 
         requireActivity().title = getString(R.string.title_records_fragment)
         initViews(view)
         setupListeners()
+        setupFragmentResultListener()
         setFabsStateTo(isRecording)
 
         val recordsAdapter = RecordsAdapter(context)
@@ -96,7 +98,6 @@ class RecordsFragment : Fragment() {
             val intent = Intent(context, RecordService::class.java)
             context.bindService(intent, recordServiceConnection, Context.BIND_AUTO_CREATE)
         }
-        viewModel.updateRecordsList()
     }
 
     override fun onResume() {
@@ -161,6 +162,7 @@ class RecordsFragment : Fragment() {
             val recording = recordService?.isRecording ?: false
             viewModel.setRecordingStatus(recording)
             viewModel.updateRecordsList()
+            showBottomSheet()
         }
 
         settingsFab?.setOnClickListener {
@@ -186,6 +188,25 @@ class RecordsFragment : Fragment() {
             records.observe(this@RecordsFragment) { records -> adapter?.submitList(records) }
             newRecordPath.observe(this@RecordsFragment) { path -> recordPath = path }
         }
+    }
+
+    private fun setupFragmentResultListener() {
+        childFragmentManager.setFragmentResultListener(
+            SaveRecordFileNameBottomSheet.RESULT_ENTER_FILENAME_KEY,
+            this
+        ) { _, bundle ->
+            val oldName = bundle.getString(SaveRecordFileNameBottomSheet.OLD_FILENAME).orEmpty()
+            val enteredName = bundle.getString(SaveRecordFileNameBottomSheet.ENTERED_FILENAME).orEmpty()
+            if (enteredName.isNotEmpty()) {
+                if (oldName.isNotEmpty()) viewModel.renameRecord(oldName, enteredName)
+                else viewModel.saveCurrRecordAs(enteredName)
+            }
+        }
+    }
+
+    private fun showBottomSheet() {
+        SaveRecordFileNameBottomSheet()
+            .show(childFragmentManager, SaveRecordFileNameBottomSheet.SAVE_RECORD_FILENAME_TAG)
     }
 
     private fun showSettingsDialog(context: Context, onPositive: (() -> Unit)? = null) {
@@ -229,7 +250,7 @@ class RecordsFragment : Fragment() {
             ROTATION_TRANSITION_ANGLE,
             ROTATION_END_ANGLE
         ).apply {
-            duration = CHANGE_EDITABLE_ANIMATION_DURATION
+            duration = CHANGE_STATE_ANIMATION_DURATION
         }
         ObjectAnimator.ofFloat(
             hiddenView,
@@ -237,7 +258,7 @@ class RecordsFragment : Fragment() {
             ROTATION_START_ANGLE,
             ROTATION_TRANSITION_ANGLE
         ).apply {
-            duration = CHANGE_EDITABLE_ANIMATION_DURATION
+            duration = CHANGE_STATE_ANIMATION_DURATION
             addListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator?) {
@@ -255,7 +276,7 @@ class RecordsFragment : Fragment() {
         private const val ROTATION_START_ANGLE = 0f
         private const val ROTATION_TRANSITION_ANGLE = 180f
         private const val ROTATION_END_ANGLE = 360f
-        private const val CHANGE_EDITABLE_ANIMATION_DURATION = 100L
+        private const val CHANGE_STATE_ANIMATION_DURATION = 100L
         private const val PREVIOUS_STATE = "previous_state"
         const val OPEN_SETTINGS_KEY = "open_settings_fragment"
         const val REQUEST_RECORD_PERMISSION_KEY = "request_record_permission"

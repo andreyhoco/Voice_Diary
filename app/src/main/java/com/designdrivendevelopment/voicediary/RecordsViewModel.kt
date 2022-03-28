@@ -40,6 +40,7 @@ class RecordsViewModel(
     fun renameRecord(oldName: String, newName: String) {
         viewModelScope.launch(coroutineDispatcher) {
             fileManager.renameRecord(oldName, newName + FILE_EXTENSION)
+            updateRecordsList()
         }
     }
 
