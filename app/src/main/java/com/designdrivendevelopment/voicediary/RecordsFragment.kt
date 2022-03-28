@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
@@ -89,6 +90,12 @@ class RecordsFragment : Fragment() {
         adapter = recordsAdapter
         recordsList?.adapter = recordsAdapter
         recordsList?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val marginItemDecoration = MarginItemDecoration(
+            marginVertical = 10,
+            marginHorizontal = 12,
+            marginBottom = getDisplayHeight(context) / DISPLAY_PARTS_NUMBER
+        )
+        recordsList?.addItemDecoration(marginItemDecoration)
     }
 
     override fun onStart() {
@@ -243,6 +250,15 @@ class RecordsFragment : Fragment() {
         return !prevValue && isRecordPermissionGranted
     }
 
+    private fun getDisplayHeight(context: Context): Int {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        return if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.R) {
+            windowManager.defaultDisplay.height
+        } else {
+            windowManager.currentWindowMetrics.bounds.height()
+        }
+    }
+
     private fun animateEditableTransition(hiddenView: View?, shownView: View?) {
         val showAnimation = ObjectAnimator.ofFloat(
             shownView,
@@ -278,6 +294,7 @@ class RecordsFragment : Fragment() {
         private const val ROTATION_END_ANGLE = 360f
         private const val CHANGE_STATE_ANIMATION_DURATION = 100L
         private const val PREVIOUS_STATE = "previous_state"
+        private const val DISPLAY_PARTS_NUMBER = 4
         const val OPEN_SETTINGS_KEY = "open_settings_fragment"
         const val REQUEST_RECORD_PERMISSION_KEY = "request_record_permission"
 
