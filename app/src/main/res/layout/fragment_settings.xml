@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:background="?attr/colorOnPrimary"
+    tools:context=".SettingsFragment">
+
+    <CheckBox
+        android:id="@+id/skip_auth_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:checked="false"
+        android:text="@string/text_skip_auth_checkbox"
+        android:textSize="20sp"
+        />
+
+    <Button
+        android:id="@+id/sync_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginVertical="24dp"
+        android:paddingVertical="8dp"
+        android:text="@string/text_sync_button"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        app:strokeColor="?attr/colorAccent"
+        style="?attr/materialButtonOutlinedStyle"
+        />
+
+    <Button
+        android:id="@+id/auth_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:paddingVertical="8dp"
+        android:text="@string/text_button_auth"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/text_hint_auth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/text_hint_auth"
+        android:textSize="16sp"
+        android:textColor="@color/gray"
+        />
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="24dp"
+        android:paddingVertical="8dp"
+        android:text="@string/text_sign_out_button"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        />
+</LinearLayout>
