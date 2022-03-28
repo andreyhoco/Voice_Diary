@@ -11,14 +11,24 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/records_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:paddingBottom="38dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/colorOnPrimary"
+        android:elevation="8dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/start_record_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="26dp"
+        app:elevation="8dp"
         android:contentDescription="@string/description_mic_fab"
         android:scaleType="center"
         app:maxImageSize="32dp"
@@ -26,12 +36,14 @@
         app:tint="?attr/colorPrimaryVariant"
         app:srcCompat="@drawable/ic_mic"/>
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/stop_record_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="26dp"
+        app:elevation="8dp"
         android:visibility="gone"
         android:contentDescription="@string/description_stop_record_fab"
         android:scaleType="center"
@@ -46,9 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="14dp"
+        app:elevation="8dp"
         android:contentDescription="@string/description_settings_fab"
         app:fabSize="mini"
         app:tint="?attr/colorPrimaryVariant"
         app:srcCompat="@drawable/ic_settings"/>
-
 </FrameLayout>

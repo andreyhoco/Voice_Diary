@@ -22,4 +22,7 @@
     <string name="bottom_sheet_title">Сохранение аудиозаписи</string>
     <string name="hint_enter_filename_text_field">Имя аудиозаписи</string>
     <string name="text_save_button">Сохранить</string>
+    <string name="play_audio_button_description">Начать воспроизведение аудиозаписи</string>
+    <string name="pause_audio_button_descrition">Приостановить воспроизведение аудиозаписи</string>
+    <string name="msg_snackbar_record_deleted">Запись удалена</string>
 </resources>

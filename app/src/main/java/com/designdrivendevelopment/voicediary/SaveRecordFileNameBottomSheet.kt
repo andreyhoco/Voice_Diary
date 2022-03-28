@@ -1,5 +1,6 @@
 package com.designdrivendevelopment.voicediary
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
     private var enteredNameTextField: TextInputLayout? = null
     private var saveButton: Button? = null
+    private var success = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +35,11 @@ class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
         clearViews()
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (!success) setFragmentResult(RESULT_ENTER_FILENAME_KEY, Bundle())
+    }
+
     private fun setupListeners() {
         enteredNameTextField?.error = null
         saveButton?.setOnClickListener {
@@ -45,6 +52,7 @@ class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
                 putString(ENTERED_FILENAME, text)
                 putString(OLD_FILENAME, arguments?.getString(OLD_FILENAME).orEmpty())
             }
+            success = true
             setFragmentResult(RESULT_ENTER_FILENAME_KEY, bundle)
             dismiss()
         }

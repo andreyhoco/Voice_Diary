@@ -26,6 +26,8 @@
         </activity>
         <service android:name=".RecordService"
             android:exported="false" />
+        <service android:name=".MediaPlayerService"
+            android:exported="false" />
     </application>
 
 </manifest>
