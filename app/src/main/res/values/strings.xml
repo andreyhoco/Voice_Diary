@@ -18,4 +18,8 @@
     <string name="title_records_fragment">Ваши записи</string>
     <string name="alert_open_settings_while_record">Сейчас происходит запись голосового сообщения, если Вы перейдете в настройки, запись будет остановлена</string>
     <string name="alert_request_record_permission">Для записи голосовых сообщений, необходимо предоставить приложению доступ к микрофону, далее будет запрошено соответствующее разрешение</string>
+    <string name="error_missing_filename">Необходимо ввести имя</string>
+    <string name="bottom_sheet_title">Сохранение аудиозаписи</string>
+    <string name="hint_enter_filename_text_field">Имя аудиозаписи</string>
+    <string name="text_save_button">Сохранить</string>
 </resources>

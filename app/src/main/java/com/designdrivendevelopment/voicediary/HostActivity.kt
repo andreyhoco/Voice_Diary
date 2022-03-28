@@ -41,13 +41,7 @@ class HostActivity : AppCompatActivity() {
             setFragmentResultListener(
                 RecordsFragment.REQUEST_RECORD_PERMISSION_KEY, this@HostActivity
             ) { _, _ ->
-                MaterialAlertDialogBuilder(this@HostActivity)
-                    .setMessage(R.string.alert_request_record_permission)
-                    .setNeutralButton(android.R.string.ok) { dialog, _ ->
-                        dialog.dismiss()
-                    }.setOnDismissListener {
-                        recordPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-                    }.show()
+                recordPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
             }
         }
     }
