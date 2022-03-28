@@ -107,7 +107,7 @@
         android:visibility="gone"
         app:iconPadding="0dp"
         app:iconTint="?attr/colorAccent"
-        app:icon="@drawable/ic_play_circle"
+        app:icon="@drawable/ic_pause_circle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/end_border"

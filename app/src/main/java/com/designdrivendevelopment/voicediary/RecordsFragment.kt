@@ -20,10 +20,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 class RecordsFragment : Fragment() {
     private var recordsList: RecyclerView? = null
@@ -32,7 +34,9 @@ class RecordsFragment : Fragment() {
     private var stopRecordFab: FloatingActionButton? = null
     private var isRecordPermissionGranted: Boolean = false
     private var recordService: RecordService? = null
-    private var isBound = false
+    private var playerService: MediaPlayerService? = null
+    private var isRecorderBound = false
+    private var isPlayerBound = false
     private var isRecording = false
     private var recordPath = ""
     private var adapter: RecordsAdapter? = null
@@ -46,7 +50,7 @@ class RecordsFragment : Fragment() {
 
     private val recordServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(p0: ComponentName?, binder: IBinder?) {
-            isBound = true
+            isRecorderBound = true
             recordService = (binder as? RecordService.LocalBinder)?.getService()
             val recording = recordService?.isRecording ?: false
             viewModel.setRecordingStatus(recording)
@@ -54,9 +58,23 @@ class RecordsFragment : Fragment() {
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
-            isBound = false
+            isRecorderBound = false
             recordService = null
             viewModel.setRecordingStatus(false)
+        }
+    }
+
+    private val playerServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, binder: IBinder?) {
+            isPlayerBound = true
+            playerService = (binder as? MediaPlayerService.LocalBinder)?.getService()
+            if (playerService?.completionListener == null) playerService?.completionListener = viewModel::onCompletion
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isPlayerBound = false
+            playerService?.completionListener = null
+            playerService = null
         }
     }
 
@@ -79,6 +97,7 @@ class RecordsFragment : Fragment() {
         val context = requireContext()
         if (isRecordPermissionGranted) RecordService.start(context)
         else viewModel.updateRecordsList()
+        MediaPlayerService.start(context)
 
         requireActivity().title = getString(R.string.title_records_fragment)
         initViews(view)
@@ -86,30 +105,39 @@ class RecordsFragment : Fragment() {
         setupFragmentResultListener()
         setFabsStateTo(isRecording)
 
-        val recordsAdapter = RecordsAdapter(context)
+        val recordsAdapter = RecordsAdapter(context,
+            onPlayClicked = {
+                viewModel.setPlayingRecord(it)
+            },
+            onPauseClicked = {
+                viewModel.setPlayingRecord(it)
+            }
+        )
         adapter = recordsAdapter
         recordsList?.adapter = recordsAdapter
         recordsList?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         val marginItemDecoration = MarginItemDecoration(
             marginVertical = 10,
-            marginHorizontal = 12,
-//            marginBottom = getDisplayHeight(context) / DISPLAY_PARTS_NUMBER
+            marginHorizontal = 12
         )
         recordsList?.addItemDecoration(marginItemDecoration)
+//        setupSwipeToDelete()
     }
 
     override fun onStart() {
         super.onStart()
+        val context = requireActivity()
         if (isRecordPermissionGranted) {
-            val context = requireActivity()
             val intent = Intent(context, RecordService::class.java)
             context.bindService(intent, recordServiceConnection, Context.BIND_AUTO_CREATE)
         }
+        val playerIntent = Intent(context, MediaPlayerService::class.java)
+        context.bindService(playerIntent, playerServiceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onResume() {
         super.onResume()
-        val context = requireActivity()
+        val context = requireContext()
         if (updatePermissionStatus(context)) {
             val intent = Intent(context, RecordService::class.java)
             RecordService.start(context)
@@ -119,10 +147,13 @@ class RecordsFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        if (isRecordPermissionGranted && isBound) {
-            requireActivity().unbindService(recordServiceConnection)
-            isBound = false
+        val context = requireContext()
+        if (isRecordPermissionGranted && isRecorderBound) {
+            context.unbindService(recordServiceConnection)
+            isRecorderBound = false
         }
+        context.unbindService(playerServiceConnection)
+        isPlayerBound = false
     }
 
     override fun onDestroyView() {
@@ -168,7 +199,7 @@ class RecordsFragment : Fragment() {
             if (isRecording) recordService?.stopRecord()
             val recording = recordService?.isRecording ?: false
             viewModel.setRecordingStatus(recording)
-//            viewModel.updateRecordsList()
+            viewModel.updateRecordsList()
             showBottomSheet()
         }
 
@@ -192,8 +223,18 @@ class RecordsFragment : Fragment() {
                 else setFabsStateTo(newState)
                 this@RecordsFragment.isRecording = newState
             }
-            records.observe(this@RecordsFragment) { records -> adapter?.submitList(records) }
+            records.observe(this@RecordsFragment) { records ->
+                adapter?.submitList(records)
+            }
             newRecordPath.observe(this@RecordsFragment) { path -> recordPath = path }
+            playingRecord.observe(this@RecordsFragment) { record ->
+                if (record != null) {
+                    if (playerService?.isPlaying == false) playerService?.play(record.uri)
+                    else playerService?.stop()
+                } else {
+                    playerService?.stop()
+                }
+            }
         }
     }
 
@@ -227,6 +268,15 @@ class RecordsFragment : Fragment() {
             }
             .show()
     }
+
+//    private fun setupSwipeToDelete() {
+//        val onItemSwipedToDelete = { positionForRemove: Int ->
+//            viewModel.deleteRecord(positionForRemove)
+//            Snackbar.make(requireView(), getString(R.string.msg_snackbar_record_deleted), Snackbar.LENGTH_SHORT).show()
+//        }
+//        val swipeToDeleteCallback = SwipeToDelete(onItemSwipedToDelete)
+//        ItemTouchHelper(swipeToDeleteCallback).attachToRecyclerView(recordsList)
+//    }
 
     private fun updateFabsStateTo(newStateIsRecording: Boolean) {
         if (newStateIsRecording) {

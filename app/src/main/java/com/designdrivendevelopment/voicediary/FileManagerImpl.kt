@@ -9,12 +9,16 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class FileManagerImpl(
     private val context: Context,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : FileManager {
+    private var counter: Int = 0
     private val recordsDir = context.filesDir
 
     override fun getRecordName(): String {
@@ -30,9 +34,23 @@ class FileManagerImpl(
         newName: String
     ): Boolean = withContext(coroutineDispatcher) {
         return@withContext try {
-            recordsDir.listFiles()
-                ?.firstOrNull { it.name == oldName }
-                ?.renameTo(File(recordsDir, newName)) ?: false
+            if (oldName == newName) true
+            else {
+                var oldFile: File? = null
+                var newFile: File? = null
+                recordsDir.listFiles()?.forEach { file ->
+                    when (file.name) {
+                        oldName -> oldFile = file
+                        newName -> newFile = file
+                    }
+                }
+                val name = if (newFile != null) {
+                    counter ++
+                    newName.dropLast(FILE_EXTENSION.length) + "($counter)" + FILE_EXTENSION
+                } else newName
+                oldFile?.renameTo(File(recordsDir, name))
+                true
+            }
         } catch (e: IOException) {
             false
         }

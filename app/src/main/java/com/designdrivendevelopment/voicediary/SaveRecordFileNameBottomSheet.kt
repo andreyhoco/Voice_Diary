@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
     private var enteredNameTextField: TextInputLayout? = null
     private var saveButton: Button? = null
+    private var success = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +37,7 @@ class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        setFragmentResult(RESULT_ENTER_FILENAME_KEY, Bundle())
+        if (!success) setFragmentResult(RESULT_ENTER_FILENAME_KEY, Bundle())
     }
 
     private fun setupListeners() {
@@ -51,6 +52,7 @@ class SaveRecordFileNameBottomSheet : BottomSheetDialogFragment() {
                 putString(ENTERED_FILENAME, text)
                 putString(OLD_FILENAME, arguments?.getString(OLD_FILENAME).orEmpty())
             }
+            success = true
             setFragmentResult(RESULT_ENTER_FILENAME_KEY, bundle)
             dismiss()
         }
