@@ -16,4 +16,6 @@
     <string name="text_hint_auth">Вы уже авторизованы</string>
     <string name="text_sign_out_button">Выйти из уч. записи</string>
     <string name="title_records_fragment">Ваши записи</string>
+    <string name="alert_open_settings_while_record">Сейчас происходит запись голосового сообщения, если Вы перейдете в настройки, запись будет остановлена</string>
+    <string name="alert_request_record_permission">Для записи голосовых сообщений, необходимо предоставить приложению доступ к микрофону, далее будет запрошено соответствующее разрешение</string>
 </resources>

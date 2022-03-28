@@ -3,24 +3,17 @@ package com.designdrivendevelopment.voicediary
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.commit
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class HostActivity : AppCompatActivity() {
     private var recordPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                val prefs = getSharedPreferences(SettingsFragment.SETTINGS_PREFS, MODE_PRIVATE)
-                prefs.edit()?.apply {
-                    putBoolean(RecordsFragment.RECORD_PERMISSION, isGranted)
-                    apply()
-                }
-            }
+            if (isGranted) RecordService.start(this)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,18 +21,6 @@ class HostActivity : AppCompatActivity() {
         setContentView(R.layout.activity_host)
 
         setupFragmentListeners()
-        val isRecordPermissionGranted =
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.RECORD_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED
-
-        val prefs = getSharedPreferences(SettingsFragment.SETTINGS_PREFS, MODE_PRIVATE)
-        prefs.edit()?.apply {
-            putBoolean(RecordsFragment.RECORD_PERMISSION, isRecordPermissionGranted)
-            apply()
-        }
-
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 replace(R.id.fragment_container, RecordsFragment.newInstance())
@@ -60,8 +41,13 @@ class HostActivity : AppCompatActivity() {
             setFragmentResultListener(
                 RecordsFragment.REQUEST_RECORD_PERMISSION_KEY, this@HostActivity
             ) { _, _ ->
-                // Показать диалог
-                recordPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                MaterialAlertDialogBuilder(this@HostActivity)
+                    .setMessage(R.string.alert_request_record_permission)
+                    .setNeutralButton(android.R.string.ok) { dialog, _ ->
+                        dialog.dismiss()
+                    }.setOnDismissListener {
+                        recordPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }.show()
             }
         }
     }
