@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -98,10 +99,10 @@ class FileManagerImpl(
 
         val mediaMetadataDate = mediaMetadataRetriever
             .extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE).orEmpty()
-        val date = SimpleDateFormat("yyyyMMdd'T'hhmmss.SSS'Z'", Locale.getDefault()).apply {
-            timeZone = TimeZone.getTimeZone("GMT")
-        }.parse(mediaMetadataDate)
-        val creationDate = if (date != null) {
+        val creationDate = try {
+            val date = SimpleDateFormat("yyyyMMdd'T'hhmmss.SSS'Z'", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("GMT")
+            }.parse(mediaMetadataDate) ?: throw ParseException("Date is null", 0)
             calendar.time = date
             val hours = calendar.get(Calendar.HOUR_OF_DAY).convertToTwoDigits()
             val minutes = calendar.get(Calendar.MINUTE).convertToTwoDigits()
@@ -113,7 +114,7 @@ class FileManagerImpl(
                 val day = calendar.get(Calendar.DAY_OF_MONTH).convertToTwoDigits()
                 "$day.$month.$year в $hours:$minutes"
             }
-        } else {
+        } catch (e: ParseException) {
             ""
         }
 
