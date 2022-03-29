@@ -16,6 +16,8 @@
  * [Фикс бага с отображением записываемого аудио](https://github.com/andreyhoco/Voice_Diary/commit/e74f8ed94a4610dff68fe3e418d304fa426ab9f0)
  * [Фикс бага с отображением кнопок play/start](https://github.com/andreyhoco/Voice_Diary/commit/c033bc166b01cb5bde39c366e680d7fd1c908c4f)
 
+Скачать последнюю версию с учетом багфиксов (после 00:00 28 марта только исправлялись баги) можно [здесь](https://drive.google.com/file/d/1Z0dvUeHqRhmfjAlQk0gtKD6GKbUdWGRK/view?usp=sharing).
+
 ### Реализованный функционал
 К сожалению, я не успел реализовать все фичи, которые хотел (такие уж выпали выходные). Однако, почти весь основной функционал был реализован:
 
