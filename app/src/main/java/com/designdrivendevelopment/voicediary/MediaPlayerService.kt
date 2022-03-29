@@ -114,7 +114,7 @@ class MediaPlayerService : Service() {
     }
 
     companion object {
-        private const val DELAY_TO_DESTROY_WITHOUT_CLIENTS = 5000L
+        private const val DELAY_TO_DESTROY_WITHOUT_CLIENTS = 1000L
 
         fun start(context: Context) {
             val intent = Intent(context, MediaPlayerService::class.java)
