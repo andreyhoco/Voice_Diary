@@ -59,6 +59,7 @@ class MediaPlayerService : Service() {
     }
 
     override fun onDestroy() {
+        completionListener?.invoke()
         completionListener = null
         stop()
         player?.release()
