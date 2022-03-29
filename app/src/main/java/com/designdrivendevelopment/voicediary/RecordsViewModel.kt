@@ -33,7 +33,8 @@ class RecordsViewModel(
     fun updateRecordsList() {
         viewModelScope.launch(coroutineDispatcher) {
             val records = if (_isRecording.value == true) {
-                fileManager.getRecords().filterNot { record -> record.name == currentRecordName }
+                val currentRecord = currentRecordName.dropLast(FILE_EXTENSION.length)
+                fileManager.getRecords().filterNot { record -> record.name == currentRecord }
             } else fileManager.getRecords()
             if (currentPlayingRecord != null) {
                 val mappedRecords = records.map { record ->
@@ -88,8 +89,8 @@ class RecordsViewModel(
             record == null -> {
                 _playingRecord.value = record
                 currentPlayingRecord = record
-                _records.value = _records.value?.map { record ->
-                    if (record.isPlaying) record.copy(isPlaying = false) else record
+                _records.value = _records.value?.map { oldRecord ->
+                    if (oldRecord.isPlaying) oldRecord.copy(isPlaying = false) else oldRecord
                 }
             }
             currentPlayingRecord?.equalsExcludePlaying(record) == true -> {
